@@ -10,13 +10,20 @@ class DockingStation
 
   def release_bike
     fail "No bikes at this station" if empty?
-    @bikes_in_station.last.release
-    @bikes_in_station.pop
+    @bikes_in_station.each_with_index do |bike, index|
+      if bike.working?
+        bike.release
+        @bikes_in_station.delete_at(index)
+        return bike
+      end
+    end
+    fail "No working bikes at this station"
   end
 
-  def dock(bike)
+  def dock(bike, status="working")
     fail "The station is full" if full?
     @bikes_in_station.push(bike)
+    bike.working_status = status
     bike.dock
   end
 
@@ -34,9 +41,11 @@ end
 
 class Bike
   attr_reader :dock_status
+  attr_writer :working_status
 
   def initialize
     @dock_status = "docked"
+    @working_status = "working"
   end
 
   def dock
@@ -48,6 +57,8 @@ class Bike
   end
 
   def working?
-    true
+    return true if @working_status == "working"
+    false
   end
+
 end
