@@ -1,9 +1,10 @@
 class DockingStation
   attr_reader :bikes_in_station
+  DEFAULT_CAPACITY = 20
 
   def initialize
     @bikes_in_station = []
-    20.times{@bikes_in_station << Bike.new}
+    DEFAULT_CAPACITY.times{@bikes_in_station << Bike.new}
   end
 
   def release_bike
@@ -25,7 +26,7 @@ class DockingStation
   end
 
   def full?
-    @bikes_in_station.length == 20
+    @bikes_in_station.length == DEFAULT_CAPACITY
   end
 
 end
