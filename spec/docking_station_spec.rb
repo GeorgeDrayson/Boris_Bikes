@@ -1,15 +1,24 @@
 require 'docking_station'
 
 describe DockingStation do
+
   it { is_expected.to respond_to :release_bike }
   it { expect(subject.release_bike).to be_a Bike }
   it { expect(subject.release_bike.working?).to eq true }
   it { is_expected.to respond_to :dock }
 
+  it "releases a working bike" do
+    bike = double(:bike)
+    allow(bike).to receive(:working?).and_return(true)
+    ds = DockingStation.new(1)
+    ds.release_bike
+    ds.dock(bike)
+    expect(ds.release_bike.working?).to eq true
+  end
+
   it "raises an error when no bike available" do
     expect {
-      station = DockingStation.new
-      21.times{station.release_bike}
+      21.times{subject.release_bike}
     }.to raise_error("No bikes at this station")
   end
 
@@ -30,15 +39,14 @@ describe DockingStation do
 
   it "checks if default capacity is the default of capacity" do
     expect(
-      DockingStation.new.bikes_in_station.length
+      subject.bikes_in_station.length
     ).to eq 20
   end
 
   it 'allows user to dock a broken bike' do
-    ds = DockingStation.new
-    bike = ds.release_bike
-    ds.dock(bike, 'broken')
-    expect(ds.bikes_in_station[-1].working?).to eq false
+    bike = subject.release_bike
+    subject.dock(bike, 'broken')
+    expect(subject.bikes_in_station[-1].working?).to eq false
   end
 
   it "doesn't release a broken bike when there are only broken bikes" do
